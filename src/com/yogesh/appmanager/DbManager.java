@@ -111,10 +111,10 @@ public class DbManager extends SQLiteOpenHelper {
 
 				// Inserting Rown
 				long insert = db.insert(TABLE_INSTALLED, null, values);
-				Log.v("yogesh", "Insert in install db successfully: " + insert);
+				//Log.v("yogesh", "Insert in install db successfully: " + insert);
 			}
-			else 
-				Log.v("yogesh", "Already exist");
+			//else 
+				//Log.v("yogesh", "Already exist");
 		}
 	}
 	private boolean mIsPackgeAlreadyInstall(String packagename) {
@@ -129,23 +129,27 @@ public class DbManager extends SQLiteOpenHelper {
 	public InstallItem getInstallItem(int id) {
 		InstallItem item = new InstallItem();
 		SQLiteDatabase db = this.getReadableDatabase();
-		 
-        Cursor cursor = db.query(TABLE_INSTALLED, new String[] { KEY_ID,KEY_PACKAGE_NAME,KEY_LABEL,KEY_ICON }, KEY_ID + " = ? ",
-                new String[] { String.valueOf(id) }, null, null, null, null);
-        if (cursor != null)
-            cursor.moveToFirst();
- 
-        int item_id = cursor.getInt(cursor.getColumnIndex(KEY_ID));
-        String packageName = cursor.getString(cursor.getColumnIndex(KEY_PACKAGE_NAME));
-        String label = cursor.getString(cursor.getColumnIndex(KEY_LABEL));
-        byte[] byteData = cursor.getBlob(cursor.getColumnIndex(KEY_ICON));
-        Bitmap image = BitmapFactory.decodeByteArray(byteData, 0, byteData.length);
-        
-        item.setId(item_id);
-        item.setPackageName(packageName);
-        item.setLable(label);
-        item.setIcon(image);
-        cursor.close();
+
+		Cursor cursor = db.query(TABLE_INSTALLED, new String[] { KEY_ID,
+				KEY_PACKAGE_NAME, KEY_LABEL, KEY_ICON }, KEY_ID + " = ? ",
+				new String[] { String.valueOf(id) }, null, null, null, null);
+		if (cursor != null)
+			cursor.moveToFirst();
+		if (cursor.getCount() > 0) {
+			int item_id = cursor.getInt(cursor.getColumnIndex(KEY_ID));
+			String packageName = cursor.getString(cursor
+					.getColumnIndex(KEY_PACKAGE_NAME));
+			String label = cursor.getString(cursor.getColumnIndex(KEY_LABEL));
+			byte[] byteData = cursor.getBlob(cursor.getColumnIndex(KEY_ICON));
+			Bitmap image = BitmapFactory.decodeByteArray(byteData, 0,
+					byteData.length);
+
+			item.setId(item_id);
+			item.setPackageName(packageName);
+			item.setLable(label);
+			item.setIcon(image);
+		}
+		cursor.close();
 		return item;
 	}
 	
@@ -153,11 +157,16 @@ public class DbManager extends SQLiteOpenHelper {
 		int id = -1;
 		String selectQuery = "SELECT "+KEY_ID+" FROM " + TABLE_INSTALLED +" WHERE "+KEY_PACKAGE_NAME+" LIKE \""+name+"\"";
 		SQLiteDatabase db = this.getWritableDatabase();
-	    Cursor cursor = db.rawQuery(selectQuery, null);
-	    if(cursor != null && cursor.getCount() > 0) {
-	    	cursor.moveToFirst();
-	    	id = cursor.getInt(cursor.getColumnIndex(KEY_ID));
-	    }
+	    try {
+			Cursor cursor = db.rawQuery(selectQuery, null);
+			if(cursor != null && cursor.getCount() > 0) {
+				cursor.moveToFirst();
+				id = cursor.getInt(cursor.getColumnIndex(KEY_ID));
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	    return id;
 	}
 	

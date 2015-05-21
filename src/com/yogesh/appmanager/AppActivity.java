@@ -1,37 +1,69 @@
 package com.yogesh.appmanager;
 
-import android.app.TabActivity;
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TabHost;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.app.ActionBar;
+import android.app.ActionBar.TabListener;
+import android.app.ActionBar.Tab;
+import android.app.FragmentTransaction;
 
-public class AppActivity extends TabActivity {
+public class AppActivity extends FragmentActivity implements android.app.ActionBar.TabListener {
 
+	private ViewPager viewPager;
+    private TabsPagerAdapter mAdapter;
+    private ActionBar actionBar;
+    // Tab titles
+    private String[] tabs = { "Installed", "Updated", "Uninstalled" };
+	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_app);
 		
-		TabHost tabHost = getTabHost();
-	    TabHost.TabSpec spec;
-	    Intent intent;
-
-	    intent = new Intent().setClass(this, InstallListActivity.class);
-	    spec = tabHost.newTabSpec("First").setIndicator("Installed")
-	                  .setContent(intent);
-	    tabHost.addTab(spec);
-
-	    intent = new Intent().setClass(this, UpdatedListActivity.class);
-	    spec = tabHost.newTabSpec("Second").setIndicator("Updated")
-	                  .setContent(intent);
-	    tabHost.addTab(spec);
-
-	    intent = new Intent().setClass(this, UninstalledListActivity.class);
-	    spec = tabHost.newTabSpec("Third").setIndicator("Uninstalled")
-	                  .setContent(intent);
-	    tabHost.addTab(spec);
+		viewPager = (ViewPager) findViewById(R.id.pager);
+        actionBar = getActionBar();
+        mAdapter = new TabsPagerAdapter(getSupportFragmentManager());
+ 
+        viewPager.setAdapter(mAdapter);
+        viewPager.setOffscreenPageLimit(3);
+        actionBar.setHomeButtonEnabled(false);
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT)
+        	actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.one));
+ 
+        // Adding Tabs
+        for (String tab_name : tabs) {
+            Tab tab = actionBar.newTab().setText(tab_name).setTabListener(this);
+        	actionBar.addTab(tab);
+        }
+ 
+        viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        	 
+            @Override
+            public void onPageSelected(int position) {
+                // on changing the page
+                // make respected tab selected
+            	Log.v("yogesh", "page selected: "+position);
+                actionBar.setSelectedNavigationItem(position);
+            }
+ 
+            @Override
+            public void onPageScrolled(int arg0, float arg1, int arg2) {
+            }
+ 
+            @Override
+            public void onPageScrollStateChanged(int arg0) {
+            }
+        });
 	}
 	
 	@Override
@@ -60,5 +92,24 @@ public class AppActivity extends TabActivity {
 		// as you specify a parent activity in AndroidManifest.xml.
 		
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	public void onTabSelected(Tab tab, FragmentTransaction ft) {
+		// TODO Auto-generated method stub
+		viewPager.setCurrentItem(tab.getPosition(), true);
+		
+	}
+
+	@Override
+	public void onTabUnselected(Tab tab, FragmentTransaction ft) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onTabReselected(Tab tab, FragmentTransaction ft) {
+		// TODO Auto-generated method stub
+		
 	}
 }

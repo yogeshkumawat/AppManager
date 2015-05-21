@@ -27,15 +27,18 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginBottom="5dp"
-            android:textColor="#000000" />
+            android:textSize="18dp"
+            android:textStyle="bold"
+            android:textColor="#990000" />
 
         <TextView
             android:id="@+id/item_app_update_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Updated # times"
+            android:textSize="12dp"
             android:layout_gravity="center_vertical"
-            android:textColor="#000000" />
+            android:textColor="#990000" />
     </LinearLayout>
 
     <LinearLayout
@@ -50,7 +53,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Last Updated"
-            android:textColor="#000000" />
+            android:textSize="12dp"
+            android:textColor="#990000" 
+            />
 
         <TextView
             android:id="@+id/item_app_update_time"
@@ -58,7 +63,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:text="time"
-            android:textColor="#000000" />
+            android:textColor="#990000" 
+            android:textSize="12dp" />
     </LinearLayout>
 
 </RelativeLayout>

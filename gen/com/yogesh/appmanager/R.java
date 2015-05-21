@@ -22,16 +22,28 @@ public final class R {
         public static final int activity_vertical_margin=0x7f040001;
     }
     public static final class drawable {
-        public static final int ic_launcher=0x7f020000;
+        public static final int actionbar_tab_indicator=0x7f020000;
+        public static final int eight=0x7f020001;
+        public static final int five=0x7f020002;
+        public static final int four=0x7f020003;
+        public static final int ic_launcher=0x7f020004;
+        public static final int one=0x7f020005;
+        public static final int selected_tab=0x7f020006;
+        public static final int seven=0x7f020007;
+        public static final int six=0x7f020008;
+        public static final int tab_bar_background=0x7f020009;
+        public static final int three=0x7f02000a;
+        public static final int two=0x7f02000b;
     }
     public static final class id {
-        public static final int LinearLayout01=0x7f080000;
         public static final int installedlist=0x7f080001;
         public static final int item_app_icon=0x7f080005;
         public static final int item_app_label=0x7f080006;
         public static final int item_app_update_count=0x7f080007;
         public static final int item_app_update_time=0x7f080009;
+        public static final int pager=0x7f080000;
         public static final int parent=0x7f080004;
+        public static final int tab1_text=0x7f08000a;
         public static final int uninstalledlist=0x7f080002;
         public static final int update_uninstall_tv=0x7f080008;
         public static final int updatelist=0x7f080003;
@@ -43,6 +55,7 @@ public final class R {
         public static final int activity_updated_list=0x7f030003;
         public static final int app_item=0x7f030004;
         public static final int normal_app_item=0x7f030005;
+        public static final int tablayout=0x7f030006;
     }
     public static final class menu {
         public static final int app=0x7f070000;
@@ -59,20 +72,25 @@ public final class R {
         public static final int title_activity_updated_list=0x7f050004;
     }
     public static final class style {
+        public static final int ActionBarTabStyle=0x7f060001;
         /** 
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     
-
-            Theme customizations available in newer API levels can go in
-            res/values-vXX/styles.xml, while customizations related to
-            backward-compatibility can go here.
-        
+ <item name="android:actionBarTabBarStyle">@style/MyTheme.ActionBar.TabBar</item> 
          */
         public static final int AppBaseTheme=0x7f060000;
         /**  Application theme. 
  All customizations that are NOT specific to a particular API-level can go here. 
          */
-        public static final int AppTheme=0x7f060001;
+        public static final int AppTheme=0x7f060006;
+        public static final int MyActionBar=0x7f060003;
+        /**  ActionBar tabs text styles 
+         */
+        public static final int MyActionBarTabText=0x7f060005;
+        /**  ActionBar title text 
+         */
+        public static final int MyActionBarTitleText=0x7f060004;
+        public static final int MyTheme_ActionBar_TabBar=0x7f060002;
     }
 }
