@@ -4,11 +4,14 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.app.ActionBar;
@@ -20,7 +23,6 @@ public class AppActivity extends FragmentActivity implements TabListener {
 
 	private ViewPager viewPager;
     private TabsPagerAdapter mAdapter;
-    private ActionBar actionBar;
     // Tab titles
     private String[] tabs = { "Installed", "Updated", "Uninstalled" };
 	@SuppressWarnings("deprecation")
@@ -29,23 +31,19 @@ public class AppActivity extends FragmentActivity implements TabListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_app);
 		
-		viewPager = (ViewPager) findViewById(R.id.pager);
-        actionBar = getActionBar();
+		viewPager = findViewById(R.id.pager);
         mAdapter = new TabsPagerAdapter(getSupportFragmentManager());
  
         viewPager.setAdapter(mAdapter);
         viewPager.setOffscreenPageLimit(3);
-        actionBar.setHomeButtonEnabled(false);
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-        if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT)
-        	actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.one));
- 
-        // Adding Tabs
-        for (String tab_name : tabs) {
-            Tab tab = actionBar.newTab().setText(tab_name).setTabListener(this);
-        	actionBar.addTab(tab);
+
+        // Give the TabLayout the ViewPager
+        TabLayout tabLayout = findViewById(R.id.sliding_tabs);
+        tabLayout.setupWithViewPager(viewPager);
+        for (int i = 0; i < tabs.length; i++) {
+            tabLayout.getTabAt(i).setText(tabs[i]);
         }
- 
+
         viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
         	 
             @Override
@@ -53,7 +51,6 @@ public class AppActivity extends FragmentActivity implements TabListener {
                 // on changing the page
                 // make respected tab selected
             	Log.v("yogesh", "page selected: "+position);
-                actionBar.setSelectedNavigationItem(position);
             }
  
             @Override

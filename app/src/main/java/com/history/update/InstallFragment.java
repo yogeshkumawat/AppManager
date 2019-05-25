@@ -44,7 +44,7 @@ public class InstallFragment extends Fragment {
 			Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		View view = inflater.inflate(R.layout.activity_install_list, container, false);
-		mGridView = (GridView) view.findViewById(R.id.installedlist);
+		mGridView = view.findViewById(R.id.installedlist);
 		return view;
 		
 	}
