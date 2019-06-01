@@ -7,5 +7,11 @@
     <string name="title_activity_install_list">InstallListActivity</string>
     <string name="title_activity_updated_list">UpdatedListActivity</string>
     <string name="title_activity_uninstalled_list">UninstalledListActivity</string>
+    <string name="interstitial_ad_sample">Interstitial Ad Sample</string>
+    <string name="ad_id_banner_header">ca-app-pub-5860619490212795/1996766008</string>
+    <string name="ad_id_banner_footer">ca-app-pub-5860619490212795/4895102529</string>
+    <string name="ad_id_rewarded">ca-app-pub-5860619490212795/5278245908</string>
+    <string name="ad_id_interstitial">ca-app-pub-5860619490212795/4400278504</string>
+    <string name="adMob_app_id">ca-app-pub-5860619490212795~5006072728</string>
 
 </resources>

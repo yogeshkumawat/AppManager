@@ -41,13 +41,10 @@ public class DbManager extends SQLiteOpenHelper {
     
 	public DbManager(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		// TODO Auto-generated method stub
-		Log.v("yogesh", "Db Oncreate");
 		String CREATE_UPDATE_TABLE = "CREATE TABLE " + TABLE_UPDATE + "("
                 + KEY_ID + " INTEGER PRIMARY KEY," + KEY_PACKAGE_NAME + " TEXT,"
                 + KEY_TIME + " TEXT," +KEY_COUNT +" INTEGER"+")";
@@ -66,7 +63,6 @@ public class DbManager extends SQLiteOpenHelper {
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		// TODO Auto-generated method stub
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_UPDATE);
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_UNINSTALL);
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_INSTALLED);        // Create tables again
@@ -74,16 +70,22 @@ public class DbManager extends SQLiteOpenHelper {
 	}
 	
 	public void insertUninstallEntry(UninstallItem item) {
-		SQLiteDatabase db = this.getWritableDatabase();
-		 
-	    ContentValues values = new ContentValues();
-	    values.put(KEY_PACKAGE_NAME, item.getPackageName());
-	    values.put(KEY_TIME, item.getTime());
-	 
-	    // Inserting Row
-	    db.insert(TABLE_UNINSTALL, null, values);
-	    db.close();
-	}
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        if (isAlreadyInUnInstallDB(item.getPackageName())) {
+            //Remove older entry
+            int id = getUnInstallIDFromName(item.getPackageName());
+            deleteUnInstallRow(id);
+        }
+        ContentValues values = new ContentValues();
+        values.put(KEY_PACKAGE_NAME, item.getPackageName());
+        values.put(KEY_TIME, item.getTime());
+
+        // Inserting Row
+        db.insert(TABLE_UNINSTALL, null, values);
+        //db.close();
+
+    }
 	public void insertUpdateEntry(UpdateItem item) {
 		SQLiteDatabase db = this.getWritableDatabase();
 		 
@@ -94,12 +96,13 @@ public class DbManager extends SQLiteOpenHelper {
 	 
 	    // Inserting Row
 	    db.insert(TABLE_UPDATE, null, values);
-	    db.close();
+	    //db.close();
 	}
 	
 	public void insertInstallItemList(List<InstallItem> mInstalledList) {
 		SQLiteDatabase db = this.getWritableDatabase();
 		for (InstallItem mItem : mInstalledList) {
+            removeIfInUninstallItem(mItem.getPackageName());
 			if (!mIsPackgeAlreadyInstall(mItem.getPackageName())) {
 				ContentValues values = new ContentValues();
 				values.put(KEY_PACKAGE_NAME, mItem.getPackageName());
@@ -109,14 +112,33 @@ public class DbManager extends SQLiteOpenHelper {
 				mItem.getIcon().compress(CompressFormat.PNG, 0, outputStream);
 				values.put(KEY_ICON, outputStream.toByteArray());
 
-				// Inserting Rown
-				long insert = db.insert(TABLE_INSTALLED, null, values);
-				//Log.v("yogesh", "Insert in install db successfully: " + insert);
+				db.insert(TABLE_INSTALLED, null, values);
+
 			}
-			//else 
-				//Log.v("yogesh", "Already exist");
 		}
 	}
+
+	private void removeIfInUninstallItem(String packageName) {
+		if (isAlreadyInUnInstallDB(packageName)) {
+			int id = getUnInstallIDFromName(packageName);
+			deleteUnInstallRow(id);
+		}
+	}
+
+	public void insertInstallItem(InstallItem mInstallItem) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        if (!mIsPackgeAlreadyInstall(mInstallItem.getPackageName())) {
+            ContentValues values = new ContentValues();
+            values.put(KEY_PACKAGE_NAME, mInstallItem.getPackageName());
+            values.put(KEY_LABEL, mInstallItem.getLabel());
+
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            mInstallItem.getIcon().compress(CompressFormat.PNG, 0, outputStream);
+            values.put(KEY_ICON, outputStream.toByteArray());
+
+            db.insert(TABLE_INSTALLED, null, values);
+        }
+    }
 	private boolean mIsPackgeAlreadyInstall(String packagename) {
 		int id = -1;
 		id = getInstalledIDfromName(packagename);
@@ -125,8 +147,33 @@ public class DbManager extends SQLiteOpenHelper {
 		else
 			return false;
 	}
-	
-	public InstallItem getInstallItem(int id) {
+
+	public boolean isAlreadyInUnInstallDB(String packageName) {
+	    int id = -1;
+	    id = getUnInstallIDFromName(packageName);
+	    if (id > 0)
+	        return true;
+	    else
+	        return false;
+    }
+
+    public int getUnInstallIDFromName(String packageName) {
+        int id = -1;
+        String selectQuery = "SELECT "+KEY_ID+" FROM " + TABLE_UNINSTALL +" WHERE "+KEY_PACKAGE_NAME+" LIKE \""+packageName+"\"";
+        SQLiteDatabase db = this.getWritableDatabase();
+        try {
+            Cursor cursor = db.rawQuery(selectQuery, null);
+            if(cursor != null && cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                id = cursor.getInt(cursor.getColumnIndex(KEY_ID));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return id;
+    }
+
+    public InstallItem getInstallItem(int id) {
 		InstallItem item = new InstallItem();
 		SQLiteDatabase db = this.getReadableDatabase();
 
@@ -149,7 +196,7 @@ public class DbManager extends SQLiteOpenHelper {
 			item.setLable(label);
 			item.setIcon(image);
 		}
-		cursor.close();
+		//cursor.close();
 		return item;
 	}
 	
@@ -189,7 +236,7 @@ public class DbManager extends SQLiteOpenHelper {
 	    Cursor cursor = db.rawQuery(selectQuery, null);
 	 
 	    // looping through all rows and adding to list
-	    if (cursor.moveToFirst()) {
+	    if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
 	        do {
 	            UpdateItem item = new UpdateItem();
 	            item.setPackageName(cursor.getString(cursor.getColumnIndex(KEY_PACKAGE_NAME)));
@@ -202,8 +249,8 @@ public class DbManager extends SQLiteOpenHelper {
 	            items.add(item);
 	        } while (cursor.moveToNext());
 	    }
-	 
-	    cursor.close();
+	    //if (cursor != null)
+	        //cursor.close();
 	    // return list
 	    return items;
 	}
@@ -228,7 +275,7 @@ public class DbManager extends SQLiteOpenHelper {
 	        } while (cursor.moveToNext());
 	    }
 	 
-	    cursor.close();
+	    //cursor.close();
 	    // return list
 	    return items;
 	}
@@ -271,7 +318,7 @@ public class DbManager extends SQLiteOpenHelper {
             cursor.moveToFirst();
  
         int count = cursor.getInt(cursor.getColumnIndex(KEY_COUNT));
-        cursor.close();
+        //cursor.close();
 		return count;
 		
 	}
@@ -284,7 +331,7 @@ public class DbManager extends SQLiteOpenHelper {
             cursor.moveToFirst();
  
         String time = cursor.getString(cursor.getColumnIndex(KEY_TIME));
-        cursor.close();
+        //cursor.close();
 		return time;
 		
 	}
@@ -298,7 +345,7 @@ public class DbManager extends SQLiteOpenHelper {
             cursor.moveToFirst();
  
         String time = cursor.getString(cursor.getColumnIndex(KEY_TIME));
-        cursor.close();
+        //cursor.close();
 		return time;
 	}
 	
@@ -306,7 +353,7 @@ public class DbManager extends SQLiteOpenHelper {
 		SQLiteDatabase db = this.getWritableDatabase();
 	    db.delete(TABLE_UNINSTALL, KEY_ID + " = ?",
 	            new String[] { String.valueOf(id) });
-	    db.close();
+	    //db.close();
 	}
 	
 	public void exportDatabse(String databaseName) {
@@ -315,7 +362,7 @@ public class DbManager extends SQLiteOpenHelper {
             File data = Environment.getDataDirectory();
 
             if (sd.canWrite()) {
-                String currentDBPath = "//data//" + "com.yogesh.appmanager" + "//databases//"
+                String currentDBPath = "//data//" + "com.history.update" + "//databases//"
                         + databaseName + "";
                 String backupDBPath = "backupname.db";
                 File currentDB = new File(data, currentDBPath);
@@ -327,7 +374,7 @@ public class DbManager extends SQLiteOpenHelper {
                     FileOutputStream fos = new FileOutputStream(backupDB);
                     FileChannel dst = fos.getChannel();
                     dst.transferFrom(src, 0, src.size());
-                    Log.v("yogesh", "database copied");
+                    Log.v("BOSS", "database copied");
                     src.close();
                     dst.close();
                     fis.close();

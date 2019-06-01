@@ -17,13 +17,12 @@ import android.widget.TextView;
 public class AppAdapter extends BaseAdapter{
 
 	private Context mContext;
-	private List<NormalAppInfo> mAppList = new ArrayList<NormalAppInfo>();
+	private List<NormalAppInfo> mAppList;
 	private LayoutInflater mInflater;
 	private DbManager mDbManager;
 	private boolean mIsUpdateAdapter;
 	
 	public AppAdapter(Context context, List<NormalAppInfo> appList, boolean mIsupdate) {
-		// TODO Auto-generated constructor stub
 		mContext = context;
 		mAppList = appList;
 		mInflater = LayoutInflater.from(mContext);
@@ -32,34 +31,29 @@ public class AppAdapter extends BaseAdapter{
 	}
 	@Override
 	public int getCount() {
-		// TODO Auto-generated method stub
 		return mAppList.size();
 	}
 
 	@Override
 	public Object getItem(int arg0) {
-		// TODO Auto-generated method stub
 		return mAppList.get(arg0);
 	}
 
 	@Override
 	public long getItemId(int arg0) {
-		// TODO Auto-generated method stub
 		return arg0;
 	}
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		// TODO Auto-generated method stub
 		if(convertView == null) {
 			convertView = mInflater.inflate(R.layout.app_item, null);
 		}
-		Log.v("yogesh", "Position: "+position);
-		ImageView icon = (ImageView) convertView.findViewById(R.id.item_app_icon);
-		TextView label = (TextView) convertView.findViewById(R.id.item_app_label);
-		TextView tv_count = (TextView) convertView.findViewById(R.id.item_app_update_count);
-		TextView tv_time = (TextView) convertView.findViewById(R.id.item_app_update_time);
-		TextView uninstallORUpdateText = (TextView) convertView.findViewById(R.id.update_uninstall_tv);
+		ImageView icon =  convertView.findViewById(R.id.item_app_icon);
+		TextView label =  convertView.findViewById(R.id.item_app_label);
+		TextView tv_count =  convertView.findViewById(R.id.item_app_update_count);
+		TextView tv_time =  convertView.findViewById(R.id.item_app_update_time);
+		TextView uninstallORUpdateText =  convertView.findViewById(R.id.update_uninstall_tv);
 		
 		
 		convertView.setTag(mAppList.get(position).getName());
@@ -68,11 +62,10 @@ public class AppAdapter extends BaseAdapter{
 			
 			label.setText(mAppList.get(position).getLabel());
 			int count = mDbManager.getUpdateCount(mAppList.get(position).getId());
-			Log.v("yogesh", "Count from db is "+count);
 			String time = mDbManager.getUpdatedTime(mAppList.get(position).getId());
 			SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 			String date = df.format(Long.parseLong(time));
-			tv_count.setText("Updated "+count+" times");
+			tv_count.setText("(Updated "+count+" times)");
 			tv_time.setText(date);
 			
 		}

@@ -1,6 +1,8 @@
 package com.history.update;
 
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -43,6 +45,7 @@ public class AppActivity extends FragmentActivity implements TabListener {
         for (int i = 0; i < tabs.length; i++) {
             tabLayout.getTabAt(i).setText(tabs[i]);
         }
+        startService(new Intent(this, AppReceiverService.class));
 
         viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
         	 
@@ -50,7 +53,6 @@ public class AppActivity extends FragmentActivity implements TabListener {
             public void onPageSelected(int position) {
                 // on changing the page
                 // make respected tab selected
-            	Log.v("yogesh", "page selected: "+position);
             }
  
             @Override
@@ -62,8 +64,8 @@ public class AppActivity extends FragmentActivity implements TabListener {
             }
         });
 	}
-	
-	@Override
+
+    @Override
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
@@ -75,21 +77,10 @@ public class AppActivity extends FragmentActivity implements TabListener {
 		super.onStop();
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.app, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		
-		return super.onOptionsItemSelected(item);
-	}
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
 
 	@Override
 	public void onTabSelected(Tab tab, FragmentTransaction ft) {
@@ -101,12 +92,12 @@ public class AppActivity extends FragmentActivity implements TabListener {
 	@Override
 	public void onTabUnselected(Tab tab, FragmentTransaction ft) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onTabReselected(Tab tab, FragmentTransaction ft) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }
