@@ -10,6 +10,7 @@ import java.util.List;
 
 public class Utils {
     private static List<NormalAppInfo> InstalledItemList;
+    public static int COUNT_TO_SHOW_FULL_AD = 3;
     public static Bitmap drawableToBitmap (Drawable drawable) {
         if (drawable instanceof BitmapDrawable) {
             return ((BitmapDrawable)drawable).getBitmap();

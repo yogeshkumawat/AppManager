@@ -29,7 +29,7 @@ public class SplashScreenActivity extends AppCompatActivity {
     private ArrayList<InstallItem> mInstallItem;
     private DbManager mDbManager;
     private ArrayList<NormalAppInfo> mAppList;
-    private AdView mFooterAdView;
+    private AdView mFooterAdView, mHeaderAdView;
     private AdRequest mAdRequest;
 
     @Override
@@ -44,6 +44,7 @@ public class SplashScreenActivity extends AppCompatActivity {
 
     private void loadAds() {
         mFooterAdView.loadAd(mAdRequest);
+        mHeaderAdView.loadAd(mAdRequest);
     }
 
     private void init() {
@@ -56,13 +57,13 @@ public class SplashScreenActivity extends AppCompatActivity {
         MobileAds.initialize(this, getResources().getString(R.string.adMob_app_id));
         mAdRequest = new AdRequest.Builder()
                 .addTestDevice("6306CDE98430C7B82650E6D9964D6084")
-                //.addTestDevice("YOUR TEST DEVICE")
                 .build();
     }
 
     private void initView() {
         mProgressBar = findViewById(R.id.progess_bar);
         mFooterAdView = findViewById(R.id.admob_footer);
+        mHeaderAdView = findViewById(R.id.admob_header);
     }
 
     private void getApplicationList() {

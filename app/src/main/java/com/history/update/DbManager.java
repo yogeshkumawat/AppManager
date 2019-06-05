@@ -19,6 +19,8 @@ import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
+
 public class DbManager extends SQLiteOpenHelper {
 	
 	private static final int DATABASE_VERSION = 2;
@@ -93,10 +95,9 @@ public class DbManager extends SQLiteOpenHelper {
 	    values.put(KEY_PACKAGE_NAME, item.getPackageName());
 	    values.put(KEY_TIME, item.getTime());
 	    values.put(KEY_COUNT, item.getCount());
-	 
 	    // Inserting Row
 	    db.insert(TABLE_UPDATE, null, values);
-	    //db.close();
+	    db.close();
 	}
 	
 	public void insertInstallItemList(List<InstallItem> mInstalledList) {
@@ -222,7 +223,7 @@ public class DbManager extends SQLiteOpenHelper {
 		String selectQuery = "SELECT "+KEY_ID+" FROM " + TABLE_UPDATE +" WHERE "+KEY_PACKAGE_NAME+" LIKE \""+name+"\"";
 		SQLiteDatabase db = this.getWritableDatabase();
 	    Cursor cursor = db.rawQuery(selectQuery, null);
-	    if(cursor != null) {
+	    if(cursor != null && cursor.getCount() > 0) {
 	    	cursor.moveToFirst();
 	    	id = cursor.getInt(cursor.getColumnIndex(KEY_ID));
 	    }
@@ -341,12 +342,14 @@ public class DbManager extends SQLiteOpenHelper {
 		 
         Cursor cursor = db.query(TABLE_UNINSTALL, new String[] { KEY_TIME }, KEY_ID + " = ?",
                 new String[] { String.valueOf(id) }, null, null, null, null);
-        if (cursor != null)
+        if (cursor != null && cursor.getCount() > 0) {
             cursor.moveToFirst();
- 
-        String time = cursor.getString(cursor.getColumnIndex(KEY_TIME));
-        //cursor.close();
-		return time;
+
+            String time = cursor.getString(cursor.getColumnIndex(KEY_TIME));
+            //cursor.close();
+            return time;
+        }
+        return "-1";
 	}
 	
 	public void deleteUnInstallRow(int id) {
@@ -355,6 +358,13 @@ public class DbManager extends SQLiteOpenHelper {
 	            new String[] { String.valueOf(id) });
 	    //db.close();
 	}
+
+    public void deleteUpdateItemRow(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_UPDATE, KEY_ID + " = ?",
+                new String[] { String.valueOf(id) });
+        //db.close();
+    }
 	
 	public void exportDatabse(String databaseName) {
         try {

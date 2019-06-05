@@ -16,6 +16,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+
 public class UninstallFragment extends Fragment{
 	
 	private DbManager mDbManager;
@@ -23,11 +26,16 @@ public class UninstallFragment extends Fragment{
 	private List<UninstallItem> mUninstallItems;
 	private List<NormalAppInfo> mAppList;
 	private ListView mListView;
+    private AdView mHeaderAdView, mFooterAdView;
+    private AdRequest mAdRequest;
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.activity_uninstalled_list, container, false);
 		mListView =  view.findViewById(R.id.uninstalledlist);
+        mHeaderAdView = view.findViewById(R.id.admob_header);
+        mFooterAdView = view.findViewById(R.id.admob_footer);
 		return view;
 	}
 	
@@ -65,6 +73,15 @@ public class UninstallFragment extends Fragment{
 		}
 		AppAdapter mAdapter = new AppAdapter(mContext, mAppList,false);
 		mListView.setAdapter(mAdapter);
+        mAdRequest = new AdRequest.Builder()
+                .addTestDevice("6306CDE98430C7B82650E6D9964D6084")
+                .build();
+        loadAds();
 	}
+
+    private void loadAds() {
+        mFooterAdView.loadAd(mAdRequest);
+        mHeaderAdView.loadAd(mAdRequest);
+    }
 
 }

@@ -25,17 +25,24 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+
 public class InstallFragment extends Fragment {
 	
 	private Context mContext;
 	private NormalAdapter mNormalAdapter;
 	private GridView mGridView;
+	private AdView mHeaderAdView, mFooterAdView;
+	private AdRequest mAdRequest;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.activity_install_list, container, false);
 		mGridView = view.findViewById(R.id.installedlist);
+		mHeaderAdView = view.findViewById(R.id.admob_header);
+		mFooterAdView = view.findViewById(R.id.admob_footer);
 		return view;
 		
 	}
@@ -43,7 +50,7 @@ public class InstallFragment extends Fragment {
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		initView();
+		init();
 		mNormalAdapter = new NormalAdapter(mContext, Utils.getInstalledItemList());
 		mGridView.setAdapter(mNormalAdapter);
 		mGridView.setOnItemClickListener(itemClick);
@@ -62,7 +69,16 @@ public class InstallFragment extends Fragment {
 		}
 	};
 	
-	private void initView() {
+	private void init() {
 		mContext = getActivity();
+        mAdRequest = new AdRequest.Builder()
+                .addTestDevice("6306CDE98430C7B82650E6D9964D6084")
+                .build();
+        loadAds();
 	}
+
+    private void loadAds() {
+        mFooterAdView.loadAd(mAdRequest);
+        mHeaderAdView.loadAd(mAdRequest);
+    }
 }
