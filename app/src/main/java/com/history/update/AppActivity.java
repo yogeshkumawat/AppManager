@@ -2,6 +2,7 @@ package com.history.update;
 
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
@@ -171,6 +172,12 @@ public class AppActivity extends FragmentActivity implements TabListener {
             @Override
             public void onClick(View v) {
                 finish();
+            }
+        });
+        dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                dialogRl.removeViewAt(0);
             }
         });
 
