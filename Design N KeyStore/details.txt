@@ -1,0 +1,11 @@
+Keystone password: curious07
+Alias = alias
+
+Features to be Implemented:
+1. Sort Install list item
+2. Recommend some apps
+3. Show ads with list
+4. Open play store link while tap on uninstall item
+5. Find better logo icon
+6. Show all the history list while tap on updated app item
+7. Beautify Exit Dialog
