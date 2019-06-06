@@ -25,6 +25,16 @@
         android:layout_above="@+id/admob_footer"
         android:clipToPadding="true" />
 
+    <TextView
+        android:id="@+id/no_data_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="No App has been uninstall yet"
+        android:textColor="#000"
+        android:textSize="16dp"
+        android:visibility="gone" />
+
     <com.google.android.gms.ads.AdView
         android:id="@+id/admob_footer"
         android:layout_width="wrap_content"

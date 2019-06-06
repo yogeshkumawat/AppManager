@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -28,6 +29,7 @@ public class UninstallFragment extends Fragment{
 	private ListView mListView;
     private AdView mHeaderAdView, mFooterAdView;
     private AdRequest mAdRequest;
+    private TextView tvNoData;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -36,6 +38,7 @@ public class UninstallFragment extends Fragment{
 		mListView =  view.findViewById(R.id.uninstalledlist);
         mHeaderAdView = view.findViewById(R.id.admob_header);
         mFooterAdView = view.findViewById(R.id.admob_footer);
+        tvNoData = view.findViewById(R.id.no_data_tv);
 		return view;
 	}
 	
@@ -51,28 +54,34 @@ public class UninstallFragment extends Fragment{
 		mUninstallItems = new ArrayList<>();
 		mDbManager = new DbManager(mContext);
 		mUninstallItems = mDbManager.getUnInstallItems();
-		for(UninstallItem mUninstallItem : mUninstallItems) {
-			    
-				NormalAppInfo mNormalAppInfo = new NormalAppInfo();
-				mNormalAppInfo.setName(mUninstallItem.getPackageName());
-				mNormalAppInfo.setId(mUninstallItem.getId());
-				int installed_id = mDbManager.getInstalledIDfromName(mUninstallItem.getPackageName());
-				InstallItem item = mDbManager.getInstallItem(installed_id);
-				if (installed_id > 0) {
-					mNormalAppInfo.setLabel(item.getLabel());
+		if (mUninstallItems != null && mUninstallItems.size() > 0) {
+            tvNoData.setVisibility(View.GONE);
+            for (UninstallItem mUninstallItem : mUninstallItems) {
 
-					Drawable d = new BitmapDrawable(getResources(), item.getIcon());
-					mNormalAppInfo.setDrawable(d);
+                NormalAppInfo mNormalAppInfo = new NormalAppInfo();
+                mNormalAppInfo.setName(mUninstallItem.getPackageName());
+                mNormalAppInfo.setId(mUninstallItem.getId());
+                int installed_id = mDbManager.getInstalledIDfromName(mUninstallItem.getPackageName());
+                InstallItem item = mDbManager.getInstallItem(installed_id);
+                if (installed_id > 0) {
+                    mNormalAppInfo.setLabel(item.getLabel());
 
-					mAppList.add(mNormalAppInfo);
-				} else {
-					mDbManager.deleteUnInstallRow(mUninstallItem.getId());
-				}
-				
-			
-		}
-		AppAdapter mAdapter = new AppAdapter(mContext, mAppList,false);
-		mListView.setAdapter(mAdapter);
+                    Drawable d = new BitmapDrawable(getResources(), item.getIcon());
+                    mNormalAppInfo.setDrawable(d);
+
+                    mAppList.add(mNormalAppInfo);
+                } else {
+                    mDbManager.deleteUnInstallRow(mUninstallItem.getId());
+                }
+
+
+            }
+            AppAdapter mAdapter = new AppAdapter(mContext, mAppList, false);
+            mListView.setAdapter(mAdapter);
+        }
+        else {
+		    tvNoData.setVisibility(View.VISIBLE);
+        }
         mAdRequest = new AdRequest.Builder()
                 .addTestDevice("6306CDE98430C7B82650E6D9964D6084")
                 .build();

@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -31,6 +32,7 @@ public class UpdateFragment extends Fragment{
 	private ListView mListView;
 	private AdView mHeaderAdView, mFooterAdView;
 	private AdRequest mAdRequest;
+	private TextView tvNoData;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -39,6 +41,7 @@ public class UpdateFragment extends Fragment{
 		mListView = view.findViewById(R.id.updatelist);
 		mHeaderAdView = view.findViewById(R.id.admob_header);
 		mFooterAdView = view.findViewById(R.id.admob_footer);
+		tvNoData = view.findViewById(R.id.no_data_tv);
 		return view;
 	}
 	@Override
@@ -55,31 +58,36 @@ public class UpdateFragment extends Fragment{
 		mUpdateItems = new ArrayList<>();
 		mDbManager = new DbManager(mContext);
 		mUpdateItems = mDbManager.getUpdateItems();
-		for(UpdateItem mUpdateItem : mUpdateItems) {
-			
-			try {
-				mApplicationInfo = mPackageManager.getApplicationInfo(mUpdateItem.getPackageName(), 0);
-				if (mApplicationInfo != null && isCategoryLauncher(mApplicationInfo.packageName)) {
-					NormalAppInfo mNormalAppInfo = new NormalAppInfo();
-					mNormalAppInfo.setName(mUpdateItem.getPackageName());
-					mNormalAppInfo.setLabel(mPackageManager.getApplicationLabel(mApplicationInfo).toString());
-					mNormalAppInfo.setDrawable(mPackageManager.getApplicationIcon(mApplicationInfo));
-					mNormalAppInfo.setId(mUpdateItem.getId());
-					mAppList.add(mNormalAppInfo);
+		if (mUpdateItems != null && mUpdateItems.size() > 0) {
+            tvNoData.setVisibility(View.GONE);
+            for (UpdateItem mUpdateItem : mUpdateItems) {
 
-				}
-				else {
-				    if (mApplicationInfo == null) {
-				        mDbManager.deleteUpdateItemRow(mUpdateItem.getId());
+                try {
+                    mApplicationInfo = mPackageManager.getApplicationInfo(mUpdateItem.getPackageName(), 0);
+                    if (mApplicationInfo != null && isCategoryLauncher(mApplicationInfo.packageName)) {
+                        NormalAppInfo mNormalAppInfo = new NormalAppInfo();
+                        mNormalAppInfo.setName(mUpdateItem.getPackageName());
+                        mNormalAppInfo.setLabel(mPackageManager.getApplicationLabel(mApplicationInfo).toString());
+                        mNormalAppInfo.setDrawable(mPackageManager.getApplicationIcon(mApplicationInfo));
+                        mNormalAppInfo.setId(mUpdateItem.getId());
+                        mAppList.add(mNormalAppInfo);
+
+                    } else {
+                        if (mApplicationInfo == null) {
+                            mDbManager.deleteUpdateItemRow(mUpdateItem.getId());
+                        }
                     }
+                } catch (NameNotFoundException e) {
+                    e.printStackTrace();
+                    mDbManager.deleteUpdateItemRow(mUpdateItem.getId());
                 }
-			} catch (NameNotFoundException e) {
-				e.printStackTrace();
-                mDbManager.deleteUpdateItemRow(mUpdateItem.getId());
-			}
-		}
-		AppAdapter mAdapter = new AppAdapter(mContext, mAppList, true);
-		mListView.setAdapter(mAdapter);
+            }
+            AppAdapter mAdapter = new AppAdapter(mContext, mAppList, true);
+            mListView.setAdapter(mAdapter);
+        }
+        else {
+		    tvNoData.setVisibility(View.VISIBLE);
+        }
         mAdRequest = new AdRequest.Builder()
                 .addTestDevice("6306CDE98430C7B82650E6D9964D6084")
                 .build();
