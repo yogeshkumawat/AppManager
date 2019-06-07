@@ -17,6 +17,8 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import io.fabric.sdk.android.Fabric;
@@ -85,6 +87,13 @@ public class SplashScreenActivity extends AppCompatActivity {
             mInstallItem.add(item);
             mAppList.add(app);
         }
+
+        Collections.sort(mAppList, new Comparator<NormalAppInfo>() {
+            @Override
+            public int compare(NormalAppInfo o1, NormalAppInfo o2) {
+                return o1.getLabel().compareToIgnoreCase(o2.getLabel());
+            }
+        });
     }
 
     class GetAppLicationTask extends AsyncTask<Void, Void, String> {

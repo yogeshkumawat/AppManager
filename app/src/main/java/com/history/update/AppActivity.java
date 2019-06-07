@@ -1,37 +1,26 @@
 package com.history.update;
 
 import android.app.Dialog;
-import android.content.BroadcastReceiver;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.app.ActionBar;
 import android.app.ActionBar.TabListener;
 import android.app.ActionBar.Tab;
 import android.app.FragmentTransaction;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
-import com.google.android.gms.ads.MobileAds;
 
 public class AppActivity extends FragmentActivity implements TabListener {
 
@@ -43,6 +32,7 @@ public class AppActivity extends FragmentActivity implements TabListener {
     private AdRequest mAdRequest;
     private int countToShowInterstitialAd = 0;
     private AdView mAdViewForExitDialog;
+    private boolean mIsExitDialogAdLoaded = false;
 
 	@SuppressWarnings("deprecation")
 	@Override
@@ -96,6 +86,19 @@ public class AppActivity extends FragmentActivity implements TabListener {
                 .build();
 
         mAdViewForExitDialog.loadAd(mAdRequest);
+        mAdViewForExitDialog.setAdListener(new AdListener() {
+            @Override
+            public void onAdLoaded() {
+                super.onAdLoaded();
+                mIsExitDialogAdLoaded = true;
+            }
+
+            @Override
+            public void onAdFailedToLoad(int i) {
+                super.onAdFailedToLoad(i);
+                mIsExitDialogAdLoaded = false;
+            }
+        });
     }
 
     private void showFullAd() {
@@ -180,6 +183,10 @@ public class AppActivity extends FragmentActivity implements TabListener {
                 dialogRl.removeViewAt(0);
             }
         });
+        if (mIsExitDialogAdLoaded) {
+            dialog.getWindow().setLayout((int) Utils.convertDpToPx(this, 360), (int) Utils.convertDpToPx(this, 430)); //Controlling width and height.
+        }
+        ((RelativeLayout.LayoutParams)mAdViewForExitDialog.getLayoutParams()).addRule(RelativeLayout.CENTER_HORIZONTAL);
 
         Button dialogButtonCancel = dialog.findViewById(R.id.dialogButtonCancel);
         dialogButtonCancel.setOnClickListener(new View.OnClickListener() {

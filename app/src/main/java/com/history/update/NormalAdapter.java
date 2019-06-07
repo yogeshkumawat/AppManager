@@ -47,8 +47,8 @@ public class NormalAdapter extends BaseAdapter {
 			convertView = mInflater.inflate(R.layout.normal_app_item, null);
 		}
 		
-		ImageView icon = (ImageView) convertView.findViewById(R.id.item_app_icon);
-		TextView label = (TextView) convertView.findViewById(R.id.item_app_label);
+		ImageView icon =  convertView.findViewById(R.id.item_app_icon);
+		TextView label = convertView.findViewById(R.id.item_app_label);
 		
 		icon.setImageDrawable(mAppList.get(position).getDrawable());
 		

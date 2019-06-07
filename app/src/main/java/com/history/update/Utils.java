@@ -1,5 +1,6 @@
 package com.history.update;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
@@ -35,5 +36,9 @@ public class Utils {
 
     public static List<NormalAppInfo> getInstalledItemList() {
         return InstalledItemList;
+    }
+
+    public static float convertDpToPx(Context context, float dp) {
+        return dp * context.getResources().getDisplayMetrics().density;
     }
 }

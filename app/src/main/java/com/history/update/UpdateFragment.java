@@ -1,6 +1,8 @@
 package com.history.update;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -82,6 +84,13 @@ public class UpdateFragment extends Fragment{
                     mDbManager.deleteUpdateItemRow(mUpdateItem.getId());
                 }
             }
+
+            Collections.sort(mAppList, new Comparator<NormalAppInfo>() {
+                @Override
+                public int compare(NormalAppInfo o1, NormalAppInfo o2) {
+                    return o1.getLabel().compareToIgnoreCase(o2.getLabel());
+                }
+            });
             AppAdapter mAdapter = new AppAdapter(mContext, mAppList, true);
             mListView.setAdapter(mAdapter);
         }
